@@ -59,8 +59,8 @@ export class HeaderService {
     if(this.userPreferredLanguage){
       return this.userPreferredLanguage;
     }else{
-      return "eng";
-    }    
+      return "por";
+    }
   }
 
 }
