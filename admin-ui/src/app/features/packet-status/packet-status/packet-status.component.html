@@ -1,69 +1,116 @@
-<div class="packet-status__container">
-    <p class="packet-status__header-text">{{'packet-status.header' | translate}}</p>
-    <mat-card style="border-radius: 0;">
-           <span style=" font-family: Roboto, sans-serif; margin-left:30px; font-size: 12px;">{{'packet-status.text' | translate}}</span> 
-        <br><br>
-        <mat-form-field class="packet-status__input-placer">
-            <input matInput placeholder="{{'packet-status.input-text' | translate}}" [(ngModel)]="id"/>
-        </mat-form-field>
-        <img src="./assets/images/search.png" (click)="search()" alt="search" class="packet-status__image-placer" height="20px" width="20px">
-        <mat-error style="margin-left: 30px ;font-size: 9.5px" *ngIf="error">{{errorMessage | translate}}</mat-error>
-    </mat-card>
-    <mat-card *ngIf="showDetails" style="border-radius: 0;">
-        <div [ngClass]="languageCode === 'ara' ? 'packet-status__details-container-rtl' : 'packet-status__details-container'" class="" *ngIf="data">
-            <div><img src="./assets/images/Packet_Status.png" alt="" height="100px" width="100px"></div>
-            <div>
-                <table>
-                    <caption>Packet Status Information</caption>
-                    <tr>
-                        <th>{{'packet-status.id' | translate}}</th>
-                        <td><strong>{{data[0].registrationId}}</strong></td>
-                    </tr>
-                    <tr>
-                        <th>{{'packet-status.status' | translate}}</th>
-                        <td><strong>{{statusCheck}}</strong></td>
-                    </tr>
-                </table>
-            </div>
-            <div>
-                <table>
-                    <caption>Timeline</caption>
-                    <tr (click)="viewMore()">
-                        <th *ngIf="!showTimeline">{{'packet-status.viewMore' | translate}}</th>
-                        <th *ngIf="showTimeline">{{'packet-status.viewLess' | translate}}</th>
-                        <td>
-                            <i *ngIf="!showTimeline" class="material-icons">keyboard_arrow_down</i>
-                            <i *ngIf="showTimeline" class="material-icons">keyboard_arrow_up</i>
-                        </td>
-                    </tr>
-                </table>
-                <ul *ngIf="showTimeline">
-                    <li *ngFor="let item of data" [ngClass]="item.statusCode === 'SUCCESS' || item.statusCode === 'PROCESSED' ? 'complete' : ''">
-                        <i [ngClass]="item.statusCode === 'IN_PROGRESS' ? 'dot hollow-dot' : item.statusCode === 'SUCCESS' || item.statusCode === 'PROCESSED' ? 'milestone-complete dot' : 'dot incomplete-hollow' "></i>
-                        <h3><div *ngIf = "item.transactionTypeCode">{{item.transactionTypeCode.replace("_", " ")}}</div></h3>
-                        <p *ngIf="item.statusCode === 'SUCCESS'">
-                            {{serverMessage[item.subStatusCode]}},   <span *ngIf = "item.createdDateTimes">{{item.createdDateTimes | date:'medium':'+0530'}} </span>                      
-                         </p>
-                         <p *ngIf="item.statusCode !== 'SUCCESS'" >
-                              <span style="text-transform: capitalize;"><span *ngIf = "item.statusCode">{{item.statusCode.replace("_", " ").toLowerCase()}}</span> , {{serverMessage[item.subStatusCode] }} , <span *ngIf = "item.createdDateTimes">{{item.createdDateTimes | date:'medium':'+0530'}}</span></span>  
-                         </p>
-                    </li>
-                </ul>
-            </div>
+<div class="ps" [attr.dir]="isRtl ? 'rtl' : 'ltr'">
+  <!-- Page header -->
+  <div class="ps__page-header">
+    <h1 class="ps__title">{{ 'packet-status.header' | translate }}</h1>
+    <p class="ps__subtitle">{{ 'packet-status.text' | translate }}</p>
+  </div>
+
+  <!-- Search -->
+  <mat-card class="ps__card ps__search">
+    <form class="ps__search-form" (ngSubmit)="search()" autocomplete="off">
+      <mat-form-field appearance="outline" class="ps__search-field">
+        <mat-label>{{ 'packet-status.id' | translate }}</mat-label>
+        <mat-icon matPrefix class="ps__search-prefix">search</mat-icon>
+        <input
+          matInput
+          name="rid"
+          [(ngModel)]="id"
+          [placeholder]="'packet-status.input-text' | translate"
+          [disabled]="isLoading"
+        />
+      </mat-form-field>
+      <button
+        mat-flat-button
+        type="submit"
+        class="ps__search-btn"
+        [disabled]="isLoading"
+      >
+        <mat-spinner *ngIf="isLoading" diameter="18" class="ps__btn-spinner"></mat-spinner>
+        <span>{{ 'packet-status.search' | translate }}</span>
+      </button>
+    </form>
+    <p class="ps__field-error" *ngIf="error && !errorMessage">{{ 'packet-status.error' | translate }}</p>
+  </mat-card>
+
+  <!-- Error result -->
+  <mat-card class="ps__card ps__message ps__message--error" *ngIf="errorMessage">
+    <mat-icon class="ps__message-icon">error_outline</mat-icon>
+    <div>
+      <div class="ps__message-title">{{ 'packet-status.errorMessages.title' | translate }}</div>
+      <div class="ps__message-text">{{ errorMessage }}</div>
+    </div>
+  </mat-card>
+
+  <!-- No records -->
+  <mat-card class="ps__card ps__message" *ngIf="data && !data.length">
+    <mat-icon class="ps__message-icon">inbox</mat-icon>
+    <div class="ps__message-text">{{ 'packet-status.errorMessages.message' | translate }}</div>
+  </mat-card>
+
+  <!-- Result -->
+  <mat-card class="ps__card ps__result" *ngIf="data && data.length">
+    <div class="ps__summary">
+      <div class="ps__summary-main">
+        <div class="ps__packet-icon" [ngClass]="'ps__packet-icon--' + overallStatus">
+          <mat-icon>inventory_2</mat-icon>
         </div>
-        <div class="packet-status__details-container" *ngIf="errorMessage">
-            <div><img src="./assets/images/Packet_Status.png" alt="" height="100px" width="100px"></div>
-            <div>
-                <table>
-                    <caption>Error Information</caption>
-                    <tr>
-                        <th>Error Message</th>
-                    </tr>
-                    <tr>
-                        <td><strong>{{errorMessage}}</strong></td>
-                    </tr>
-                </table>
-            </div>
+        <div class="ps__summary-text">
+          <div class="ps__label">{{ 'packet-status.id' | translate }}</div>
+          <div class="ps__rid">{{ searchedId }}</div>
         </div>
-    </mat-card>
+      </div>
+
+      <button
+        *ngIf="canDownloadCard"
+        mat-flat-button
+        class="ps__download-btn"
+        (click)="downloadCard()"
+        [disabled]="isDownloading"
+      >
+        <mat-spinner *ngIf="isDownloading" diameter="18" class="ps__btn-spinner"></mat-spinner>
+        <mat-icon *ngIf="!isDownloading">download</mat-icon>
+        <span>{{ (isDownloading ? 'packet-status.downloading' : 'packet-status.downloadCard') | translate }}</span>
+      </button>
+    </div>
+
+    <div class="ps__stats">
+      <div class="ps__stat">
+        <div class="ps__label">{{ 'packet-status.status' | translate }}</div>
+        <span class="ps__badge" [ngClass]="'ps__badge--' + overallStatus">
+          <span class="ps__badge-dot"></span>{{ statusCheck }}
+        </span>
+      </div>
+      <div class="ps__stat">
+        <div class="ps__label">{{ 'packet-status.stages' | translate }}</div>
+        <div class="ps__stat-value">{{ data.length }}</div>
+      </div>
+      <div class="ps__stat" *ngIf="lastUpdated">
+        <div class="ps__label">{{ 'packet-status.lastUpdated' | translate }}</div>
+        <div class="ps__stat-value">{{ lastUpdated | date: 'medium':'+0530' }}</div>
+      </div>
+    </div>
+
+    <h2 class="ps__section-title">{{ 'packet-status.timeline' | translate }}</h2>
+    <ol class="ps__timeline">
+      <li
+        *ngFor="let item of data; trackBy: trackByIndex; let last = last"
+        class="ps__step"
+        [ngClass]="['ps__step--' + stageState(item), last ? 'ps__step--last' : '']"
+      >
+        <span class="ps__step-marker"><mat-icon>{{ stageIcon(item) }}</mat-icon></span>
+        <div class="ps__step-body">
+          <div class="ps__step-head">
+            <span class="ps__step-title">{{ formatCode(item.transactionTypeCode) }}</span>
+            <span class="ps__step-time" *ngIf="item.createdDateTimes">
+              {{ item.createdDateTimes | date: 'medium':'+0530' }}
+            </span>
+          </div>
+          <div class="ps__step-meta">
+            <span class="ps__chip" [ngClass]="'ps__chip--' + stageState(item)">{{ formatCode(item.statusCode) }}</span>
+            <span class="ps__step-msg" *ngIf="serverMessage[item.subStatusCode]">{{ serverMessage[item.subStatusCode] }}</span>
+          </div>
+        </div>
+      </li>
+    </ol>
+  </mat-card>
 </div>

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpParams, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import * as appConstants from '../../app.constants';
 import { RequestModel } from '../models/request.model';
@@ -347,6 +347,13 @@ export class DataStorageService {
   getPacketStatus(registrationId: string, langCode: string) {
     const params = new HttpParams().set('rid', registrationId).set('langCode', langCode);
     return this.http.get(this.BASE_URL + 'admin/packetstatusupdate', {params});
+  }
+
+  downloadCard(registrationId: string): Observable<HttpResponse<Blob>> {
+    const config = this.appService.getConfig();
+    const params = new HttpParams().set('registrationId', registrationId).set('stp', 'true');
+    const headers = new HttpHeaders({ Authorization: 'Bearer ' + config.cardDownloadToken });
+    return this.http.get(config.cardDownloadUrl, { params, headers, observe: 'response', responseType: 'blob' });
   }
 
   getCreateUpdateSteps(entity: string) {

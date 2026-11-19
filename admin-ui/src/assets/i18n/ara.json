@@ -496,7 +496,17 @@
             "btnTxt": "حسنا"
         },
         "statuscheckFailed":" فشل",
-        "statuscheckCompleted":"منجز"
+        "statuscheckCompleted":"منجز",
+        "statuscheckInProgress": "قيد التنفيذ",
+        "search": "بحث",
+        "timeline": "الجدول الزمني للمعالجة",
+        "stages": "المراحل",
+        "lastUpdated": "آخر تحديث",
+        "downloadCard": "تنزيل البطاقة",
+        "downloading": "جارٍ التنزيل...",
+        "downloadSuccess": "تم تنزيل البطاقة بنجاح",
+        "downloadError": "تعذر تنزيل البطاقة. يرجى المحاولة لاحقًا.",
+        "close": "إغلاق"
     },
     "packet-upload":{
         "header":"تحميل الحزمة",

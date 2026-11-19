@@ -39,6 +39,12 @@ export class AuthInterceptor implements HttpInterceptor {
     request: HttpRequest<any>,
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
+    // External card-download API: uses its own bearer token, must not send admin
+    // session cookies (CORS) and handles its own errors, so skip global handling.
+    const config = this.appService.getConfig();
+    if (config && config.cardDownloadUrl && request.url.indexOf(config.cardDownloadUrl) === 0) {
+      return next.handle(request);
+    }
     request = request.clone({
       withCredentials: true
     });

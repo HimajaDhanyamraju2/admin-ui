@@ -329,3 +329,14 @@ mat-keyboard-container {
   padding-left: 1rem !important;
   border-bottom: 1px solid silver !important;
 }
+// Packet status – card download feedback
+.mat-snack-bar-container.packet-status-snackbar--success {
+  background: #116530;
+  color: #fff;
+  .mat-simple-snackbar-action { color: #fff; }
+}
+.mat-snack-bar-container.packet-status-snackbar--error {
+  background: #c62828;
+  color: #fff;
+  .mat-simple-snackbar-action { color: #fff; }
+}

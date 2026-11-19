@@ -6,5 +6,7 @@
     "templateRepoUrl":"/admin-ui/templates/",
     "validateToken": "admin/authorize/admin/validateToken",
     "login": "admin/login/",
-    "logout": "admin/logout/user"
+    "logout": "admin/logout/user",
+    "cardDownloadUrl": "https://pcv.gov.st/api/credentials/download",
+    "cardDownloadToken": "aa32429182bf0e4abf81a431d89b066bbc"
 }

@@ -521,7 +521,17 @@
 			"btnTxt": "D'accord"
 		},
 		"statuscheckFailed": "Échoué",
-		"statuscheckCompleted": "Terminé"
+		"statuscheckCompleted": "Terminé",
+		"statuscheckInProgress": "En cours",
+		"search": "Rechercher",
+		"timeline": "Chronologie du traitement",
+		"stages": "Étapes",
+		"lastUpdated": "Dernière mise à jour",
+		"downloadCard": "Télécharger la carte",
+		"downloading": "Téléchargement...",
+		"downloadSuccess": "Carte téléchargée avec succès",
+		"downloadError": "Impossible de télécharger la carte. Veuillez réessayer plus tard.",
+		"close": "Fermer"
 	},
 	"packet-upload": {
 		"header": "Téléchargement de paquets",
