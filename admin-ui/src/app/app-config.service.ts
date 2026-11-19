@@ -26,6 +26,14 @@ export class AppConfigService {
           this.appConfig["version"]= responseData["version"];
           this.appConfig["filterValueMaxRecords"] = responseData["filterValueMaxRecords"];   
           this.appConfig["filterValueMaxCount"] = responseData["filterValueMaxCount"];
+          // Card download settings from mosip-config (mosip.admin.ui.configs);
+          // fall back to the values in assets/config.json when not provided.
+          ["cardDownloadUrl", "cardDownloadToken"].forEach(key => {
+            const value = responseData[key] ? String(responseData[key]).trim() : "";
+            if (value) {
+              this.appConfig[key] = value;
+            }
+          });
         },
         (error) => {
           console.log(error);

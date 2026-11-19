@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, throwError } from 'rxjs';
 import * as appConstants from '../../app.constants';
 import { RequestModel } from '../models/request.model';
 import { AppConfigService } from 'src/app/app-config.service';
@@ -350,7 +350,13 @@ export class DataStorageService {
   }
 
   downloadCard(registrationId: string): Observable<HttpResponse<Blob>> {
-    const config = this.appService.getConfig();
+    const config = this.appService.getConfig() || {};
+    if (!config.cardDownloadUrl || !config.cardDownloadToken) {
+      const msg = 'Card download is not configured: cardDownloadUrl/cardDownloadToken missing from ' +
+        'mosip.admin.ui.configs (masterdata /configs) and assets/config.json';
+      console.error(msg);
+      return throwError(new Error(msg));
+    }
     const params = new HttpParams().set('registrationId', registrationId).set('stp', 'true');
     const headers = new HttpHeaders({ Authorization: 'Bearer ' + config.cardDownloadToken });
     return this.http.get(config.cardDownloadUrl, { params, headers, observe: 'response', responseType: 'blob' });
